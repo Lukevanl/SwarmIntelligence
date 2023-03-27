@@ -1,5 +1,5 @@
 // SET BOID SIZE
-let num_boid = 200
+let num_boid = 100
 // let boid_size = Array.from({length: num_boid}, () => Math.floor(Math.random() * 30 + 10));
 // let 
 // let 
@@ -8,7 +8,7 @@ const MAX_MEASUREMENTS = 100
 let checkpoint_measuresments = []
 
 let Scene = {
-    w: 600, h: 1000, swarm: [],
+    w: 700, h: 1200, swarm: [],
     neighbours: function (x) {
         let r = []
         for (let p of this.swarm) {
@@ -39,12 +39,12 @@ class Particle {
     constructor() {
         this.pos = createVector(random(0, Scene.w),
             random(0, Scene.h))
-        this.size = random(10,40)
+        this.size = random(10,30)
         this.dir = p5.Vector.random2D()
         this.checkpoint_info = [] // This array holds the values of the number of birds
-        this.strength = random(0.5, 4)
-        this.inv_cohesion_strength = this.size * 4
-        this.inv_separation_strength = 15 / this.size
+        this.strength = random(1, 3)
+        this.inv_cohesion_strength = this.size / 0.2
+        this.inv_separation_strength = 6 / this.size
     }
     step() {
         let N = 0, avg_sin = 0, avg_cos = 0, avg_p = createVector(0, 0), avg_d = createVector(0, 0)
@@ -63,12 +63,12 @@ class Particle {
         avg_sin /= N; avg_cos /= N;
         avg_p.div(N); avg_d.div(N); avg_d.mult(30)
         let avg_angle = Math.atan2(avg_sin, avg_cos)
-        avg_angle += random(-0.25, 0.25)
+        avg_angle += random(-0.1, 0.1)
         let dir_r = createVector(0, 0)
 
         // Make sure the boids stay on track
         let distanceBar = Scene.distanceToCenter(this.pos)
-        let dir_change = 0.5
+        let dir_change = 1.5
         if (distanceBar > (250 - this.size)) {
             let x_dir = 0
             let y_dir = 0
@@ -109,30 +109,31 @@ class Particle {
         }
 
         // Guide it clockwise 
-        dir_change = 0.05
+        dir_change = 0.3
         let dir_c = createVector(0, 0)
-        if (this.pos.y < 700 && this.pos.x > 300) {
+        if (this.pos.y < 650 && this.pos.x > 325) {
             // Top right
             dir_c = createVector(0, dir_change)
         }
-        else if (this.pos.y > 700 && this.pos.x > 300) {
+        else if (this.pos.y > 750 && this.pos.x > 325) {
             // Bottom right
-            dir_c = createVector(-2 * dir_change, dir_change)
+            dir_c = createVector(dir_change, 0.5*dir_change)
         }
-        else if (this.pos.y > 300 && this.pos.x < 300) {
+        else if (this.pos.y > 350 && this.pos.x < 275) {
             // Bottom left
             dir_c = createVector(0, -dir_change)
         }
-        else if (this.pos.y < 300 && this.pos.x < 300) {
+        else if (this.pos.y < 250 && this.pos.x < 275) {
             // Top Left
-            dir_c = createVector(2 * dir_change, -dir_change)
+            dir_c = createVector(dir_change, -0.5*dir_change)
         }
 
         this.dir = p5.Vector.fromAngle(avg_angle)
 
         // Check if the bird is in the checkpoint
         if (this.pos.x < 300 && this.pos.y > 400 && this.pos.y < 600) {
-            num_in_checkpoint++
+            // num_in_checkpoint++
+            num_in_checkpoint += this.size
         }
 
         let cohesion = p5.Vector.sub(avg_p, this.pos)
@@ -140,6 +141,7 @@ class Particle {
         cohesion.div(this.inv_cohesion_strength)
         this.dir.add(cohesion)
         this.dir.add(avg_d)
+        
         this.dir.add(dir_r)
         this.dir.add(dir_c)
 
@@ -172,7 +174,7 @@ class Particle {
 
 
 function setup() {
-    createCanvas(600, 1000);
+    createCanvas(700, 1200);
     for (let i = 0; i < num_boid; i++) {
         Scene.swarm.push(new Particle())
     }
