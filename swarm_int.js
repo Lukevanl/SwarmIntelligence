@@ -113,21 +113,21 @@ class Particle {
         // Guide it clockwise 
         dir_change = 0.3
         let dir_c = createVector(0, 0)
-        if (this.pos.y < 650 && this.pos.x > 325) {
+        if (this.pos.y < 700 && this.pos.x >= 300) {
             // Top right
             dir_c = createVector(0, dir_change)
         }
-        else if (this.pos.y > 750 && this.pos.x > 325) {
+        else if (this.pos.y >= 700 && this.pos.x >= 300) {
             // Bottom right
-            dir_c = createVector(dir_change, 0.5*dir_change)
+            dir_c = createVector(-0.66*dir_change, 0.33*dir_change)
         }
-        else if (this.pos.y > 350 && this.pos.x < 275) {
+        else if (this.pos.y >= 300 && this.pos.x < 300) {
             // Bottom left
             dir_c = createVector(0, -dir_change)
         }
-        else if (this.pos.y < 250 && this.pos.x < 275) {
+        else if (this.pos.y < 300 && this.pos.x < 300) {
             // Top Left
-            dir_c = createVector(dir_change, -0.5*dir_change)
+            dir_c = createVector(0.66*dir_change, -0.33*dir_change)
         }
 
         // Check if the bird is in the checkpoint
@@ -136,14 +136,15 @@ class Particle {
             num_in_checkpoint += this.size
         }
     
-        this.dir = p5.Vector.fromAngle(avg_angle)
+        // this.dir = p5.Vector.fromAngle(avg_angle)
         let cohesion = p5.Vector.sub(avg_p, this.pos)
-        this.dir.mult(random(1, this.strength))
+        // this.dir.mult(random(1, this.strength))
+        this.dir.mult(random(0, 1))
         cohesion.div(this.inv_cohesion_strength)
         // Cohesion
-        this.dir.add(cohesion)
+        // this.dir.add(cohesion)
         // Separation
-        this.dir.add(avg_d)
+        // this.dir.add(avg_d)
         
         this.dir.add(dir_r)
         this.dir.add(dir_c)
