@@ -1,10 +1,10 @@
 // SET BOID SIZE
-let num_boid = 100
+let num_boid = 50
 // let boid_size = Array.from({length: num_boid}, () => Math.floor(Math.random() * 30 + 10));
 // let 
 // let 
 let num_in_checkpoint = 0
-const MAX_MEASUREMENTS = 100
+const MAX_MEASUREMENTS = 250
 let checkpoint_measuresments = []
 
 let Scene = {
@@ -39,12 +39,12 @@ class Particle {
     constructor() {
         this.pos = createVector(random(0, Scene.w),
             random(0, Scene.h))
-        this.size = random(10,30)
+        this.size = random(20,50)
         this.dir = p5.Vector.random2D()
         this.checkpoint_info = [] // This array holds the values of the number of birds
         this.strength = random(1, 3)
         this.inv_cohesion_strength = this.size / 0.2
-        this.inv_separation_strength = 6 / this.size
+        this.inv_separation_strength = 8 / this.size
     }
     step() {
         let N = 0, avg_sin = 0, avg_cos = 0, avg_p = createVector(0, 0), avg_d = createVector(0, 0)
@@ -53,7 +53,7 @@ class Particle {
             if (n != this) {
                 let away = p5.Vector.sub(this.pos, n.pos)
                 away.div(this.inv_separation_strength * away.magSq())
-              away.add(p5.Vector(-0.1*this.size, -0.1*this.size))
+              // away.add(p5.Vector(-0.1*this.size, -0.1*this.size))
                 avg_d.add(away)
             }
             avg_sin += Math.sin(n.dir.heading())
@@ -62,8 +62,10 @@ class Particle {
         }
         avg_sin /= N; avg_cos /= N;
         avg_p.div(N); avg_d.div(N); avg_d.mult(30)
+        // Alignment 
+        // let avg_angle = createVector(0,0)
         let avg_angle = Math.atan2(avg_sin, avg_cos)
-        avg_angle += random(-0.1, 0.1)
+        avg_angle += random(-0.25, 0.25)
         let dir_r = createVector(0, 0)
 
         // Make sure the boids stay on track
@@ -128,18 +130,19 @@ class Particle {
             dir_c = createVector(dir_change, -0.5*dir_change)
         }
 
-        this.dir = p5.Vector.fromAngle(avg_angle)
-
         // Check if the bird is in the checkpoint
         if (this.pos.x < 300 && this.pos.y > 400 && this.pos.y < 600) {
             // num_in_checkpoint++
             num_in_checkpoint += this.size
         }
-
+    
+        this.dir = p5.Vector.fromAngle(avg_angle)
         let cohesion = p5.Vector.sub(avg_p, this.pos)
         this.dir.mult(random(1, this.strength))
         cohesion.div(this.inv_cohesion_strength)
+        // Cohesion
         this.dir.add(cohesion)
+        // Separation
         this.dir.add(avg_d)
         
         this.dir.add(dir_r)
