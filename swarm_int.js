@@ -136,15 +136,15 @@ class Particle {
             num_in_checkpoint += this.size
         }
     
-        // this.dir = p5.Vector.fromAngle(avg_angle)
+        this.dir = p5.Vector.fromAngle(avg_angle)
         let cohesion = p5.Vector.sub(avg_p, this.pos)
-        // this.dir.mult(random(1, this.strength))
-        this.dir.mult(random(0, 1))
+        this.dir.mult(random(1, this.strength))
+        // this.dir.mult(random(0, 1))
         cohesion.div(this.inv_cohesion_strength)
         // Cohesion
-        // this.dir.add(cohesion)
+        this.dir.add(cohesion)
         // Separation
-        // this.dir.add(avg_d)
+        this.dir.add(avg_d)
         
         this.dir.add(dir_r)
         this.dir.add(dir_c)
